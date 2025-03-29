@@ -1,18 +1,19 @@
 import * as vscode from 'vscode';
-import { AlbumManager } from '../providers/albummanager';
+import { AlbumManager } from '../providers/AlbumManager';
+import { Album } from '../models/Album';
 
 export class AlbumGridWebview implements vscode.WebviewViewProvider {
-  public static readonly viewType = 'musicShelfGrid';
-  private view?: vscode.WebviewView;
-  private albumManager: AlbumManager;
+  public static readonly viewType = 'musicShelfGrid'; // class level constnat, basicaly sayting view_type musicshelfgrid 
+  private view?: vscode.WebviewView; // instance properties that are local, type hinting, this view is optional 
+  private albumManager: AlbumManager; // album manager is an isntance of albumManager, type hinting here  
 
   constructor(private context: vscode.ExtensionContext) {
-    this.albumManager = AlbumManager.getInstance();
+    this.albumManager = AlbumManager.getInstance(); // constructort basically means init 
   }
 
   // Method to post messages to the webview
   public postMessage(message: any) {
-    this.view?.webview.postMessage(message);
+    this.view?.webview.postMessage(message); // ?. acts as optional chaining. If this view exists, post message to the webview 
   }
 
   // Resolve the webview view
@@ -25,11 +26,15 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
     };
 
     // Set the HTML content for the webview
-    webview.html = this.getWebviewContent(webviewView.webview);
+  
+
 
     // Handle messages from the webview
     webview.onDidReceiveMessage((message) => {
       switch (message.type) {
+        case "updateAlbums":
+          this.postMessage({ type: "updateAlbums", albums: this.albumManager.getAlbums() }); // post a message to 
+          break; 
         case 'error':
           vscode.window.showErrorMessage(message.text);
           break;
@@ -42,6 +47,9 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
 
   // Generate HTML content for the webview
   private getWebviewContent(webview: vscode.Webview): string {
+    // use externtal style sheets
+    const style = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'assets', 'style.css')); // convert the style.css into something vscode can use this.context.extensionUri is the root where its installed 
+    const utilJS = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'assets', 'util.js'));
     const albums = this.albumManager.getAlbums(); // Get albums from AlbumManager
     const genres = ['All', 'Rock', 'Pop', 'Jazz', 'Hip-Hop']; // Example genres
 
@@ -52,26 +60,10 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Music Shelf</title>
-        <style>
-            .album-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
-            }
-            .album-item {
-                cursor: pointer;
-                transition: transform 0.2s;
-            }
-            .album-item:hover {
-                transform: scale(1.05);
-            }
-        </style>
+        <link href="${style}" rel="stylesheet">
     </head>
     <body>
         <h1>Music Shelf</h1>
-        <select id="genreSelect">
-            ${genres.map(genre => `<option value="${genre}">${genre}</option>`).join('')}
-        </select>
         <div class="album-grid" id="albumGrid">
             ${albums.map(album => `
                 <div class="album-item" data-album='${JSON.stringify(album)}'>
@@ -80,7 +72,7 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
                 </div>
             `).join('')}
         </div>
-
+        <script src="${utilJS}"></script> 
         <script>
             const genreSelect = document.getElementById('genreSelect');
             genreSelect.addEventListener('change', function(event) {

@@ -1,0 +1,13 @@
+
+.album-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+.album-item {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.album-item:hover {
+    transform: scale(1.05);
+}

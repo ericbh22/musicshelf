@@ -2,7 +2,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Album } from '../models/Album';
-import { AlbumManager } from './albummanager';
+import { AlbumManager } from './AlbumManager';
 
 export class MusicShelfProvider implements vscode.TreeDataProvider<Album> { // again type script type specifications here, we are essetnialyl sayuing it MUST implement methods from tree data bprovider, and defining it as a class 
     private _onDidChangeTreeData = new vscode.EventEmitter<Album | undefined>(); // makes a new vscode emitter, that either listens to album changes or undefined changes 
@@ -18,7 +18,7 @@ export class MusicShelfProvider implements vscode.TreeDataProvider<Album> { // a
             this.albumManager.addAlbum({
                 title: 'Random Album', 
                 artist: 'Example Artist',
-                coverUrl: '' // Add a default cover path if length is 0 
+                coverUrl: "C:/Users/HUANG/Documents/GitHub/anic/musicshelf/src/assets/albumpics/takecare.png"
             });
         }
         

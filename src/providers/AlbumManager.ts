@@ -2,7 +2,7 @@
 import * as vscode from 'vscode';
 import { Album } from '../models/Album';
 import { v4 as uuidv4 } from 'uuid';
-
+import { AlbumGridWebview } from '../views/albumgridproviderwebview';
 export class AlbumManager { // we need to write export otherwise this class is not exportable...
     private static instance: AlbumManager; // private basically means not global basicallyt ther same as _instance = None in python :AlbumManager is just type hinting 
     private _albums: Album[] = []; // _ symbolises private, good practice, again typing hinting on Album [] = [] 
@@ -10,7 +10,7 @@ export class AlbumManager { // we need to write export otherwise this class is n
     
     // Event to notify when albums change, this is a listener
     readonly onDidChangeAlbums = this._onDidChangeAlbums.event;
-
+    
     private constructor() {}
 
     // Singleton pattern, making sure our album manager has only one instance 
@@ -29,7 +29,9 @@ export class AlbumManager { // we need to write export otherwise this class is n
             position: this.calculateNextPosition()
         }; // geneerates a new album with a unique ID 
         this._albums.push(newAlbum); // append the albunm 
+        // we might ned to add smthn to save permanentlky 
         this._onDidChangeAlbums.fire();
+
         return newAlbum;
     }
 

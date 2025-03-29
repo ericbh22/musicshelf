@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { AlbumManager } from '../providers/albummanager';
+import { AlbumManager } from '../providers/AlbumManager';
 
 export class AlbumGridWebview {
     private panel: vscode.WebviewPanel | undefined;
@@ -37,6 +37,7 @@ export class AlbumGridWebview {
 
     // Generate the HTML content for the webview
     private getWebviewContent(): string {
+        //load in external stylesheets 
         const albums = this.albumManager.getAlbums(); // Get albums from AlbumManager
         const genres = ['All', 'Rock', 'Pop', 'Jazz', 'Hip-Hop']; // Example genres
 
