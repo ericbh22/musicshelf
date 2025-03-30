@@ -47,16 +47,10 @@
                 {
                     "command": "musicshelf.addAlbum",
                     "group": "navigation"
-                }
-            ],
-            "view/item/context": [
-                {
-                    "command": "musicshelf.playAlbum",
-                    "when": "viewItem == album"
                 },
                 {
                     "command": "musicshelf.removeAlbum",
-                    "when": "viewItem == album"
+                    "group": "navigation"
                 }
             ]
         }

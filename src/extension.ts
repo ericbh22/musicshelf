@@ -35,8 +35,12 @@ export function activate(context: vscode.ExtensionContext) {
 	
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('musicshelf.removeAlbum', (album) => {
-			albumManager.removeAlbum(album.id);
+		vscode.commands.registerCommand('musicshelf.removeAlbum', async() => {
+			const name = await vscode.window.showInputBox({prompt : "Name of album to be removed"});
+			if (name){
+			albumManager.removeAlbum(name);
+			}
+			albumGridWebview.postMessage({ type: 'updateAlbums', albums: albumManager.getAlbums() });
 		}));
 
 

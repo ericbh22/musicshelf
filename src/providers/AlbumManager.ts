@@ -10,7 +10,6 @@ export class AlbumManager { // we need to write export otherwise this class is n
     
     // Event to notify when albums change, this is a listener
     readonly onDidChangeAlbums = this._onDidChangeAlbums.event;
-    
     private constructor() {}
 
     // Singleton pattern, making sure our album manager has only one instance 
@@ -27,7 +26,7 @@ export class AlbumManager { // we need to write export otherwise this class is n
             ...album, // take existing album data 
             id: uuidv4(),// this just generates a unique id 
             position: this.calculateNextPosition()
-        }; // geneerates a new album with a unique ID 
+        }; // generates a new album with a unique ID 
         this._albums.push(newAlbum); // append the albunm 
         // we might ned to add smthn to save permanentlky 
         this._onDidChangeAlbums.fire();
@@ -36,8 +35,8 @@ export class AlbumManager { // we need to write export otherwise this class is n
     }
 
     // Remove an album
-    removeAlbum(albumId: string): void {
-        this._albums = this._albums.filter(album => album.id !== albumId); // goes through the list and removes the album if it isnt what we want, the arrow is basically a callback function, kinda like lambda,  
+    removeAlbum(albumName: string): void {
+        this._albums = this._albums.filter(album => album.title !== albumName); // goes through the list and removes the album if it isnt what we want, the arrow is basically a callback function, kinda like lambda,  
         this._onDidChangeAlbums.fire();
     }
 
@@ -53,8 +52,10 @@ export class AlbumManager { // we need to write export otherwise this class is n
     // basically fire allows us to be more efficient, only checking when it matters, and void means the event doesnt carry any data 
     // Get all albums
     getAlbums(): Album[] {
+        this._onDidChangeAlbums.fire();
         return [...this._albums];
     } // returns a shallow copy 
+    
 
     // Calculate next available position in 2x3 grid
     private calculateNextPosition(): { row: number; column: number } {
