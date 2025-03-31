@@ -149,7 +149,7 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
           
           switch (message.type) {
             case 'updateAlbums':
-              console.log('Received albums update:', message.albums);
+              // console.log('Received albums update:', message.albums);
               state.albums = message.albums;
               vscode.setState(state);
               renderAlbums(message.albums);

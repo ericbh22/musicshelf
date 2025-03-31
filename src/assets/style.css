@@ -11,3 +11,13 @@
 .album-item:hover {
     transform: scale(1.05);
 }
+
+body {
+    background-image: url("./MusicCase.png");
+    background-size: auto;
+    background-position: center top;
+    background-repeat: repeat-y; /* Only repeat vertically */
+    overflow-y: hidden;
+    overflow-x: hidden;
+    min-height: 100vh;
+}

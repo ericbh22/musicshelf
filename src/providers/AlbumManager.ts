@@ -52,7 +52,6 @@ export class AlbumManager { // we need to write export otherwise this class is n
     // basically fire allows us to be more efficient, only checking when it matters, and void means the event doesnt carry any data 
     // Get all albums
     getAlbums(): Album[] {
-        this._onDidChangeAlbums.fire();
         return [...this._albums];
     } // returns a shallow copy 
     
