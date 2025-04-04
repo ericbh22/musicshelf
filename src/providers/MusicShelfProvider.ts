@@ -18,7 +18,7 @@ export class MusicShelfProvider implements vscode.TreeDataProvider<Album> { // a
             this.albumManager.addAlbum({
                 title: 'Random Album', 
                 artist: 'Example Artist',
-                coverUrl: "C:/Users/HUANG/Documents/GitHub/anic/musicshelf/src/assets/albumpics/takecare.png"
+                coverUrl: ""
             });
         }
         

@@ -1,4 +1,5 @@
 // src/providers/AlbumManager.ts
+// i think we need to use global rpoviders https://code.visualstudio.com/api/references/vscode-api#ExtensionContext.globalState and then use some node stuff 
 import * as vscode from 'vscode';
 import { Album } from '../models/Album';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,15 +11,34 @@ export class AlbumManager { // we need to write export otherwise this class is n
     
     // Event to notify when albums change, this is a listener
     readonly onDidChangeAlbums = this._onDidChangeAlbums.event;
-    private constructor() {}
+    constructor(private context?: vscode.ExtensionContext) {}
+    public saveAlbums(): void {
+        if (this.context) { // basic error handling if self.context exists 
+            console.log('Saving albums:', this._albums);
+            this.context.workspaceState.update('albums', this._albums); // using the workspacestate feature to store information about albums under "albums"
+        }
+    }
+
+    // Load albums from workspaceState
+    public loadAlbums(): void {
+        if (this.context) {
+            const saved = this.context.workspaceState.get<Album[]>('albums', []); // get the albums from the workspace state, notice we are doing a type assertion cuz its TS
+            console.log('Loaded albums:', saved);
+            this._albums = saved;  // set our albums to this._ albums 
+            this._onDidChangeAlbums.fire(); // fire change for UI to update
+        }
+    }
 
     // Singleton pattern, making sure our album manager has only one instance 
-    public static getInstance(): AlbumManager { // static means it belogsn to a class, not an instance 
+    public static getInstance(context?: vscode.ExtensionContext): AlbumManager {
         if (!AlbumManager.instance) {
-            AlbumManager.instance = new AlbumManager();
+            AlbumManager.instance = new AlbumManager(context);
+            if (context) {
+                AlbumManager.instance.loadAlbums(); // Load albums when context is available
+            }
         }
         return AlbumManager.instance;
-    } // creates an instance of the album manager 
+    }
 
     // Add a new album
     addAlbum(album: Omit<Album, 'id'>): Album {
@@ -30,7 +50,7 @@ export class AlbumManager { // we need to write export otherwise this class is n
         this._albums.push(newAlbum); // append the albunm 
         // we might ned to add smthn to save permanentlky 
         this._onDidChangeAlbums.fire();
-
+        this.saveAlbums(); // persist change
         return newAlbum;
     }
 
@@ -38,6 +58,8 @@ export class AlbumManager { // we need to write export otherwise this class is n
     removeAlbum(albumName: string): void {
         this._albums = this._albums.filter(album => album.title !== albumName); // goes through the list and removes the album if it isnt what we want, the arrow is basically a callback function, kinda like lambda,  
         this._onDidChangeAlbums.fire();
+        this.saveAlbums(); // persist change
+        
     }
 
     // Move album position
@@ -46,6 +68,7 @@ export class AlbumManager { // we need to write export otherwise this class is n
         if (album) {
             album.position = newPosition; // if album is in a new position, fire 
             this._onDidChangeAlbums.fire();
+            this.saveAlbums(); // persist change
         }
     }
     //Imagine you are in a large room with multiple people (representing different parts of your app). One person (let’s say, the album manager) announces, "The albums have been updated!" but doesn’t give any specifics (that’s where void comes in — no additional data). Everyone else in the room (the listeners) hears this announcement and reacts accordingly, maybe by updating their display, recalculating data, etc.
@@ -75,4 +98,5 @@ export class AlbumManager { // we need to write export otherwise this class is n
         // If grid is full, throw an error
         throw new Error('Album grid is full');
     }
+
 }

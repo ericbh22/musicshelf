@@ -14,7 +14,7 @@ const shelf = {
     
 };
 
-// add all the winodw update event
+// add all the window update event
 window.addEventListener("message", event => { // rmbr we used to add event listeners for "clicks" when building web pages 
     // we get the message the json data send 
     const message = event.data; 

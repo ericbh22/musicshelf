@@ -8,7 +8,7 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
   private albumManager: AlbumManager; // album manager is an isntance of albumManager, type hinting here  
 
   constructor(private context: vscode.ExtensionContext) {
-    this.albumManager = AlbumManager.getInstance();
+    this.albumManager = AlbumManager.getInstance(context);
     
     // Subscribe to album changes
     this.albumManager.onDidChangeAlbums(() => {
@@ -30,6 +30,7 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
   public resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, _token: vscode.CancellationToken) {
     this.view = webviewView;
     const webview = webviewView.webview;
+    const cdImageUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'src', 'assets', 'cd.png'));
     webview.html = this.getWebviewContent(webviewView.webview);
 
     webview.options = {
@@ -46,8 +47,10 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
         case "init":
           this.postMessage({
             type: "updateAlbums" ,
-            albums:this.albumManager.getAlbums() 
+            albums:this.albumManager.getAlbums() ,
+            cdImageUri: cdImageUri.toString()
           });
+          break;
         case "updateAlbums":
           this.postMessage({ type: "updateAlbums", albums: this.albumManager.getAlbums() }); 
           break; 
@@ -65,7 +68,7 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
   private getWebviewContent(webview: vscode.Webview): string {
     const style = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'src', 'assets', 'style.css'));
     const utilJS = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'src', 'assets', 'util.js'));
-    
+    const scriptJS = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'src', 'assets', 'script.js')); 
     return `
     <!DOCTYPE html>
     <html lang="en">
@@ -83,88 +86,7 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
       </div>
       
       <script src="${utilJS}"></script> 
-      <script>
-
-        const vscode = acquireVsCodeApi();
-        
-        // Store state information for persisting between webview loads
-        const state = vscode.getState() || { albums: [] };
-        
-        // Function to render albums
-        function renderAlbums(albums) {
-          const albumGrid = document.getElementById('albumGrid');
-          
-          // Clear existing albums
-          albumGrid.innerHTML = '';
-          
-          if (albums.length === 0) {
-            albumGrid.innerHTML = '<p>No albums added yet. Use the "Add Album" command to get started.</p>';
-            return;
-          }
-          
-          // Add each album to the grid
-          albums.forEach(album => {
-            const albumElement = document.createElement('div');
-            albumElement.className = 'album-item';
-            albumElement.setAttribute('data-album', JSON.stringify(album));
-            
-            const coverImg = document.createElement('img');
-            coverImg.src = album.coverUrl || 'https://via.placeholder.com/150?text=No+Cover';
-            coverImg.alt = \`\${album.title} by \${album.artist}\`;
-            
-            const titleDiv = document.createElement('div');
-            titleDiv.className = 'album-title';
-            titleDiv.textContent = album.title;
-            
-            const artistDiv = document.createElement('div');
-            artistDiv.className = 'album-artist';
-            artistDiv.textContent = album.artist;
-            
-            albumElement.appendChild(coverImg);
-            albumElement.appendChild(titleDiv);
-            albumElement.appendChild(artistDiv);
-            
-            // Position the album in the grid if position is available
-            //CSS is 1 indexed so we need to add stuff on, and we need backticks to create a string 
-            if (album.position) {
-              albumElement.style.gridRow = (album.position.row + 1);
-              albumElement.style.gridColumn = (album.position.column + 1);
-            }
-            
-            // Add click event listener
-            albumElement.addEventListener('click', () => {
-              vscode.postMessage({ 
-                type: 'selectAlbum', 
-                album: album 
-              });
-            });
-            
-            albumGrid.appendChild(albumElement);
-          });
-        }
-        
-        // Handle messages from the extension
-        window.addEventListener('message', event => {
-          const message = event.data;
-          
-          switch (message.type) {
-            case 'updateAlbums':
-              // console.log('Received albums update:', message.albums);
-              state.albums = message.albums;
-              vscode.setState(state);
-              renderAlbums(message.albums);
-              break;
-          }
-        });
-        
-        // Initialize by telling the extension we're ready
-        vscode.postMessage({ type: 'init' });
-        
-        // If we have albums in state, render them
-        if (state.albums.length > 0) {
-          renderAlbums(state.albums);
-        }
-      </script>
+      <script src="${scriptJS}"></script> <!-- Load external script -->
     </body>
     </html>
     `;

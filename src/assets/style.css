@@ -1,23 +1,132 @@
-
 .album-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
 }
-.album-item {
-    cursor: pointer;
-    transition: transform 0.2s;
-}
+
 .album-item:hover {
     transform: scale(1.05);
 }
 
 body {
-    background-image: url("./MusicCase.png");
+    background-image: url("./nightskydownscaled.png");
     background-size: auto;
+    width: 256px;
+    height: 256px;
     background-position: center top;
-    background-repeat: repeat-y; /* Only repeat vertically */
+    background-repeat: repeat; /* Only repeat vertically */
     overflow-y: hidden;
     overflow-x: hidden;
-    min-height: 100vh;
+    /* min-height: 100vh; */
+}
+
+.album-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: transform 0.2s; /* Fixed the missing property "transition" */
+}
+
+.album-item:hover {
+    transform: scale(1.05);
+}
+
+.album-cover-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 10px;
+    z-index: 2; /* Increased to be above the CD */
+}
+
+.album-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Shrink wrap effect */
+.plastic-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('./Album wrap fx.png') center/cover no-repeat;
+    opacity: 0.6;  /* Adjust for the transparency effect */
+    mix-blend-mode: screen; /* Helps to create the light reflection effect */
+    pointer-events: none; /* Prevent interaction */
+    z-index: 3; /* Increased to be the topmost layer */
+    transition: opacity 0.5s ease;
+}
+
+/* Album title and artist */
+.album-title, .album-artist {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #ffffff;
+    z-index: 4; /* Make sure text is above everything */
+}
+
+.remove-overlay {
+    opacity: 0;
+}
+
+.CD-Overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 150px; /* Match exactly with album cover wrapper */
+    height: 150px; /* Match exactly with album cover wrapper */
+    border-radius: 10px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Prevent CD from being visible outside its container */
+}
+
+.cd-image {
+    width: 120px;
+    height: 120px;
+    position: absolute;
+    /* Center CD precisely */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+/* Split the animation into two phases: slide out, then continuous spinning */
+@keyframes slideOut {
+    0% {
+        transform: translateX(0) rotate(0deg);
+    }
+    100% {
+        transform: translateX(100px) rotate(0deg);
+    }
+}
+
+@keyframes continuousSpin {
+    0% {
+        transform: translateX(100px) rotate(0deg);
+    }
+    100% {
+        transform: translateX(100px) rotate(360deg);
+    }
+}
+
+.slide-out-rotate {
+    animation: 
+        slideOut 0.5s ease-out forwards, 
+        continuousSpin 2s linear infinite 0.5s; /* Start spin after slideOut completes */
 }
