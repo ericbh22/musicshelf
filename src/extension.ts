@@ -4,7 +4,7 @@ import { AlbumGridWebview } from './views/albumgridproviderwebview';
 
 export function activate(context: vscode.ExtensionContext) {
 	
-    const albumManager = AlbumManager.getInstance(); // singleton instance, basically creating an instnace of this class, albummamanger() basically
+    const albumManager = AlbumManager.getInstance(context); // singleton instance, basically creating an instnace of this class, albummamanger() basically
 
     // Create the view provider
     const albumGridWebview = new AlbumGridWebview(context);

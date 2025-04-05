@@ -1,8 +1,10 @@
 const vscode = acquireVsCodeApi();
 
 // Store state information for persisting between webview loads
-const state = vscode.getState() || { albums: [] };
-
+const state = vscode.getState() || { 
+    albums: [],
+    activeCdElement: null // Track the currently active CD
+  };
 // Function to render albums
 function renderAlbums(albums) {
     const albumGrid = document.getElementById('albumGrid');
@@ -32,6 +34,7 @@ function renderAlbums(albums) {
         
         const CDOverlay = document.createElement("div");
         CDOverlay.className = "CD-Overlay" ; 
+        CDOverlay.setAttribute('data-cd-state', 'retracted'); // to manage the state of the cds so we can manage animations 
         // Div used to create the CSS for plastic overlay
         const plasticOverlay = document.createElement("div");
         plasticOverlay.className = "plastic-overlay";
@@ -75,25 +78,86 @@ function renderAlbums(albums) {
         }
         // album event is the div of the ALBUM, so this makes sense 
         // Add click event listener to remove shrink wrap and animate
+       
         albumElement.addEventListener('click', () => {
-            plasticOverlay.classList.add("remove-overlay"); // Add CSS class to animate removal, note we are using classList here because we are simply adding a class to it 
+            const cdState = CDOverlay.getAttribute("data-cd-state");
+            if (cdState === "retracted"){
+                 // Add CSS class to animate removal, note we are using classList here because we are simply adding a class to it 
+                
+                const currentlyPlaying = document.querySelector('.CD-Overlay[data-cd-state="extended"]'); // if anything is currently playing, stop it from playing, there can only be one currently playing at a time so we can use query select 
+                if (currentlyPlaying) {
+                    currentlyPlaying.classList.remove("slide-out-rotate");
+                    currentlyPlaying.classList.add("slide-in");
+                    currentlyPlaying.setAttribute('data-cd-state', 'retracted');
+
+                    const previousPlasticOverlay = currentlyPlaying.parentElement.querySelector(".plastic-overlay"); // we need parent here because we are in the CD-OVERLAY div, not in the actual album div, so we need to find the parent elemnt, then look for plastic overlay div 
+                    if (previousPlasticOverlay.classList.contains("remove-overlay")){
+                        previousPlasticOverlay.classList.remove("remove-overlay");
+                    };
+                    previousPlasticOverlay.classList.add("add-overlay");
+                    
+                    // Let the animation finish before removing the class
+                    setTimeout(() => {
+                        currentlyPlaying.classList.remove("slide-in");
+                    }, 500);
+                }
+                
+                // removing plastic effect 
+                if (plasticOverlay.classList.contains("add-overlay")){
+                    plasticOverlay.classList.remove("add-overlay");}
+                plasticOverlay.classList.add("remove-overlay"); // this references the album that was being clicked, albumElement.plasticoverlay essentially 
+                // setTimeout(() => {
+                //     plasticOverlay.style.display = "none"; // Hide overlay after timed animation 
+                // }, 500);
+                
+
             
-            setTimeout(() => {
-                plasticOverlay.style.display = "none"; // Hide overlay after timed animation 
-            }, 500);
 
-            // const cdOverlayAnim = albumElement.querySelector(".CD-Overlay"); // note we use query selector not get by class because we dont wnat the htmlcollection we want a signle element 
+                if (CDOverlay) {
+                    CDOverlay.classList.add("slide-out-rotate");
+                    CDOverlay.setAttribute('data-cd-state', 'extended');
+                }
+                
+                // setTimeout(() => {
+                //     CDOverlay.classList.remove("remove-overlay");
+                // }, 500);
+                
+                state.activeCdElement = album.title;
+                vscode.setState(state);
 
-            if (CDOverlay) {
-                CDOverlay.classList.add("slide-out-rotate");
-            }
+                // Now we send the message to the extension, this message is currently not needed as we are only making front end changes, but eventually  this post message is what will trigger the spotify API 
+                vscode.postMessage({ 
+                    type: 'selectAlbum', 
+                    album: album,
+                    cdState: CDOverlay.getAttribute('data-cd-state')
+                });
+            }else{
+                CDOverlay.classList.add("slide-in");
+                CDOverlay.setAttribute('data-cd-state', 'retracted');
 
-            // Now we send the message to the extension, this message is currently not needed as we are only making front end changes, but eventually  this post message is what will trigger the spotify API 
-            vscode.postMessage({ 
-                type: 'selectAlbum', 
-                album: album 
-            });
+                // Let the animation finish before removing the class
+                setTimeout(() => {
+                    CDOverlay.classList.remove("slide-in");
+                }, 500);
+                plasticOverlay.style.display = "flex";
+                plasticOverlay.classList.remove("remove-overlay");
+                plasticOverlay.classList.add("add-overlay");
+                // setTimeout(() => {
+                //     CDOverlay.classList.remove("add-overlay");
+                // }, 500);
+                CDOverlay.classList.remove("slide-out-rotate");
+                
+                // Clear the active CD
+                state.activeCdElement = null;
+                vscode.setState(state);
+                vscode.postMessage({ 
+                    type: 'selectAlbum', 
+                    album: album,
+                    cdState: CDOverlay.getAttribute('data-cd-state')
+                });
+            };
         });
+
 
         // Now append each child div which represents an album to albumGrid
         albumGrid.appendChild(albumElement);

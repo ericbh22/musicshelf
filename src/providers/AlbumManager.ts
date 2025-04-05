@@ -4,6 +4,10 @@ import * as vscode from 'vscode';
 import { Album } from '../models/Album';
 import { v4 as uuidv4 } from 'uuid';
 import { AlbumGridWebview } from '../views/albumgridproviderwebview';
+import * as fs from 'fs'; // used to read and write to files 
+import * as path from 'path'; // convenience 
+let extensionStorageFolder: string = '';
+let albumsPath: string;
 export class AlbumManager { // we need to write export otherwise this class is not exportable...
     private static instance: AlbumManager; // private basically means not global basicallyt ther same as _instance = None in python :AlbumManager is just type hinting 
     private _albums: Album[] = []; // _ symbolises private, good practice, again typing hinting on Album [] = [] 
@@ -11,30 +15,27 @@ export class AlbumManager { // we need to write export otherwise this class is n
     
     // Event to notify when albums change, this is a listener
     readonly onDidChangeAlbums = this._onDidChangeAlbums.event;
-    constructor(private context?: vscode.ExtensionContext) {}
-    public saveAlbums(): void {
-        if (this.context) { // basic error handling if self.context exists 
-            console.log('Saving albums:', this._albums);
-            this.context.workspaceState.update('albums', this._albums); // using the workspacestate feature to store information about albums under "albums"
+    constructor(private context?: vscode.ExtensionContext) { // we path trhough the context into this constructor, context contains subscriptions, and global storage 
+        if (context) {
+            extensionStorageFolder = context.globalStorageUri.fsPath; // so this is where our extension is stored 
+            albumsPath = path.join(extensionStorageFolder, 'albums.json'); // and we add albums.json to it, this is always safe as we are just returning a string 
+            if (!fs.existsSync(extensionStorageFolder)) {  // if the path exists 
+                fs.mkdirSync(extensionStorageFolder, { recursive: true });  //create the path if it doesnt already exist, saves us from crashes, rmbr we just need the path to exist here, before we were doing string checks 
+            }
+    
+            this.loadAlbumsFile(); //  Try loading albums from file
         }
     }
 
-    // Load albums from workspaceState
-    public loadAlbums(): void {
-        if (this.context) {
-            const saved = this.context.workspaceState.get<Album[]>('albums', []); // get the albums from the workspace state, notice we are doing a type assertion cuz its TS
-            console.log('Loaded albums:', saved);
-            this._albums = saved;  // set our albums to this._ albums 
-            this._onDidChangeAlbums.fire(); // fire change for UI to update
-        }
-    }
+
+
 
     // Singleton pattern, making sure our album manager has only one instance 
     public static getInstance(context?: vscode.ExtensionContext): AlbumManager {
         if (!AlbumManager.instance) {
             AlbumManager.instance = new AlbumManager(context);
             if (context) {
-                AlbumManager.instance.loadAlbums(); // Load albums when context is available
+                AlbumManager.instance.loadAlbumsFile(); // Load albums when context is available
             }
         }
         return AlbumManager.instance;
@@ -50,7 +51,8 @@ export class AlbumManager { // we need to write export otherwise this class is n
         this._albums.push(newAlbum); // append the albunm 
         // we might ned to add smthn to save permanentlky 
         this._onDidChangeAlbums.fire();
-        this.saveAlbums(); // persist change
+        this.saveAlbumsToFile();
+
         return newAlbum;
     }
 
@@ -58,7 +60,8 @@ export class AlbumManager { // we need to write export otherwise this class is n
     removeAlbum(albumName: string): void {
         this._albums = this._albums.filter(album => album.title !== albumName); // goes through the list and removes the album if it isnt what we want, the arrow is basically a callback function, kinda like lambda,  
         this._onDidChangeAlbums.fire();
-        this.saveAlbums(); // persist change
+        this.saveAlbumsToFile();
+
         
     }
 
@@ -68,7 +71,8 @@ export class AlbumManager { // we need to write export otherwise this class is n
         if (album) {
             album.position = newPosition; // if album is in a new position, fire 
             this._onDidChangeAlbums.fire();
-            this.saveAlbums(); // persist change
+            this.saveAlbumsToFile();
+
         }
     }
     //Imagine you are in a large room with multiple people (representing different parts of your app). One person (let’s say, the album manager) announces, "The albums have been updated!" but doesn’t give any specifics (that’s where void comes in — no additional data). Everyone else in the room (the listeners) hears this announcement and reacts accordingly, maybe by updating their display, recalculating data, etc.
@@ -77,8 +81,53 @@ export class AlbumManager { // we need to write export otherwise this class is n
     getAlbums(): Album[] {
         return [...this._albums];
     } // returns a shallow copy 
-    
 
+    private loadAlbumsFile() {
+        if (fs.existsSync(albumsPath)) { // if path exists 
+            try {
+                const raw = fs.readFileSync(albumsPath, 'utf8'); //try read the json files, we read it as a string so its not in raw binary 
+                const parsed = JSON.parse(raw); // now turn it into a ts array we can use 
+                if (Array.isArray(parsed)) { // conver to js array 
+                    this._albums = parsed;
+                    this._onDidChangeAlbums.fire();
+                    console.log('Albums loaded from file:', parsed);
+                }
+            } catch (e) {
+                console.error('Error loading albums file:', e);
+                this._albums = [];
+            }
+        } else {
+            this.saveAlbumsToFile(); // create an empty file
+        }
+    }
+    
+    private saveAlbumsToFile() {
+        try {
+            fs.writeFileSync(albumsPath, JSON.stringify(this._albums, null, 2)); // write it to file 
+            console.log('Albums saved to file.');
+        } catch (e) {
+            console.error('Error saving albums file:', e);
+        }
+    }
+    // structure of our json file should look like this right now 
+    // [
+    //     {
+    //       "id": "abc123",
+    //       "title": "Jazz Collection",
+    //       "position": {
+    //         "row": 0,
+    //         "column": 0
+    //       }
+    //     },
+    //     {
+    //       "id": "def456",
+    //       "title": "Hip Hop Vibes",
+    //       "position": {
+    //         "row": 0,
+    //         "column": 1
+    //       }
+    //     }
+    //   ]
     // Calculate next available position in 2x3 grid
     private calculateNextPosition(): { row: number; column: number } {
         const maxRows = 2;

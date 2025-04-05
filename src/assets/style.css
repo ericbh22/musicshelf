@@ -1,7 +1,7 @@
 .album-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 50px;
 }
 
 .album-item:hover {
@@ -67,6 +67,7 @@ body {
     pointer-events: none; /* Prevent interaction */
     z-index: 3; /* Increased to be the topmost layer */
     transition: opacity 0.5s ease;
+    display: flex;
 }
 
 /* Album title and artist */
@@ -79,6 +80,10 @@ body {
 
 .remove-overlay {
     opacity: 0;
+}
+
+.add-overlay {
+    opacity: 0.6;
 }
 
 .CD-Overlay {
@@ -112,16 +117,16 @@ body {
         transform: translateX(0) rotate(0deg);
     }
     100% {
-        transform: translateX(100px) rotate(0deg);
+        transform: translateX(60px) rotate(0deg);
     }
 }
 
 @keyframes continuousSpin {
     0% {
-        transform: translateX(100px) rotate(0deg);
+        transform: translateX(60px) rotate(0deg);
     }
     100% {
-        transform: translateX(100px) rotate(360deg);
+        transform: translateX(60px) rotate(360deg);
     }
 }
 
@@ -129,4 +134,17 @@ body {
     animation: 
         slideOut 0.5s ease-out forwards, 
         continuousSpin 2s linear infinite 0.5s; /* Start spin after slideOut completes */
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-in forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(60px) rotate(0deg); /*we start from 100 and go to 0 */
+    }
+    100% {
+        transform: translateX(0px) rotate(0deg); /* this is where element will end up */
+    }
 }
