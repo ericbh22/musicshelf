@@ -7,7 +7,7 @@
   "engines": {
     "vscode": "^1.98.0"
   },
-  "icon": "icon.PNG",
+  "icon": "images/icon.PNG",
   "license": "MIT",
   "categories": [
     "Other"
@@ -22,7 +22,7 @@
     "views": {
       "explorer": [
         {
-          "icon" : "icon.PNG",
+          "icon" : "images/icon.PNG",
           "id": "musicShelfGrid",
           "name": "musicshelf",
           "type": "webview"
