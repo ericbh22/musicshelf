@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { AlbumManager } from '../providers/AlbumManager';
-import { Album } from '../models/Album';
+import { pauseSpotify, playPlaylist, playSpotify,  } from '../services/spotifyplayer';
 
 export class AlbumGridWebview implements vscode.WebviewViewProvider {
   public static readonly viewType = 'musicShelfGrid'; // class level constnat, basicaly sayting view_type musicshelfgrid 
@@ -9,7 +9,6 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
 
   constructor(private context: vscode.ExtensionContext) {
     this.albumManager = AlbumManager.getInstance(context);
-    
     // Subscribe to album changes
     this.albumManager.onDidChangeAlbums(() => {
       if (this.view) {
@@ -30,19 +29,16 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
   public resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, _token: vscode.CancellationToken) {
     this.view = webviewView;
     const webview = webviewView.webview;
-    const cdImageUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'src', 'assets', 'cd.png'));
+    const cdImageUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'src', 'assets', 'vinylbig.png'));
+    const borderImageUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'src', 'assets', 'cd.png'));
     webview.html = this.getWebviewContent(webviewView.webview);
 
     webview.options = {
       enableScripts: true,
     };
 
-    // Set the HTML content for the webview
-  
-
-
     // Handle messages from the webview
-    webview.onDidReceiveMessage((message) => {
+    webview.onDidReceiveMessage(async (message) => {
       switch (message.type) {
         case "init":
           this.postMessage({
@@ -54,13 +50,31 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
         case "updateAlbums":
           this.postMessage({ type: "updateAlbums", albums: this.albumManager.getAlbums() }); 
           break; 
+        case "resetAlbums":
+          const albums = this.albumManager.getAlbums();
         case 'error':
           vscode.window.showErrorMessage(message.text);
           break;
         case 'info':
           vscode.window.showInformationMessage(message.text);
           break;
-      }
+        case 'selectAlbum':
+          const album = message.album;
+          const cdState = message.cdState;
+          if (cdState === 'extended') {
+            // CD is extended, play the album
+            if (album.isPlaylist === true){
+              await playPlaylist(this.context, album.spotifyURI);
+            }
+            else{
+              await playSpotify(this.context, album.spotifyURI); // we need to use this.context when resolving in webviews 
+            }
+          } else if (cdState === 'retracted') {
+            // CD is retracted, pause playback
+            await pauseSpotify(this.context);
+          }
+          break;
+    }
     });
   }
 
@@ -79,12 +93,12 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
       <link href="${style}" rel="stylesheet">
     </head>
     <body>
-      <h1>Music Shelf</h1>
-      
       <div class="album-grid" id="albumGrid">
         <!-- Albums will be inserted here dynamically -->
       </div>
-      
+      <div>
+        <img src="${webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'src', 'assets', 'flowerborderglow.png'))}" class="fixed-top-right" />
+      </div>
       <script src="${utilJS}"></script> 
       <script src="${scriptJS}"></script> <!-- Load external script -->
     </body>
@@ -93,7 +107,7 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
   }
 }
 
-
+// <img src="${webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'src', 'assets', 'spikepng.png'))}" class="fixed-bottom-left" />
 // explanation of events
 // when extension wants to talk to webview u do this.view.webview.postMessage, so ur posting a message to self.webview
 // when webview talks to extension, we do vscode.postmessage, talking to the extension now 

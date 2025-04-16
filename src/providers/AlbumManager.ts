@@ -3,7 +3,6 @@
 import * as vscode from 'vscode';
 import { Album } from '../models/Album';
 import { v4 as uuidv4 } from 'uuid';
-import { AlbumGridWebview } from '../views/albumgridproviderwebview';
 import * as fs from 'fs'; // used to read and write to files 
 import * as path from 'path'; // convenience 
 let extensionStorageFolder: string = '';
@@ -26,10 +25,6 @@ export class AlbumManager { // we need to write export otherwise this class is n
             this.loadAlbumsFile(); //  Try loading albums from file
         }
     }
-
-
-
-
     // Singleton pattern, making sure our album manager has only one instance 
     public static getInstance(context?: vscode.ExtensionContext): AlbumManager {
         if (!AlbumManager.instance) {
@@ -48,6 +43,7 @@ export class AlbumManager { // we need to write export otherwise this class is n
             id: uuidv4(),// this just generates a unique id 
             position: this.calculateNextPosition()
         }; // generates a new album with a unique ID 
+        console.log(newAlbum);
         this._albums.push(newAlbum); // append the albunm 
         // we might ned to add smthn to save permanentlky 
         this._onDidChangeAlbums.fire();
@@ -56,13 +52,18 @@ export class AlbumManager { // we need to write export otherwise this class is n
         return newAlbum;
     }
 
+
+
     // Remove an album
     removeAlbum(albumName: string): void {
         this._albums = this._albums.filter(album => album.title !== albumName); // goes through the list and removes the album if it isnt what we want, the arrow is basically a callback function, kinda like lambda,  
+        const temp = this._albums;
+        this._albums = [];
+        for (var album of temp){
+            this.addAlbum(album); // this can be done so we basically reinsert all the albums to prevent gaps after deleting from the middle 
+        }
         this._onDidChangeAlbums.fire();
         this.saveAlbumsToFile();
-
-        
     }
 
     // Move album position
@@ -90,7 +91,7 @@ export class AlbumManager { // we need to write export otherwise this class is n
                 if (Array.isArray(parsed)) { // conver to js array 
                     this._albums = parsed;
                     this._onDidChangeAlbums.fire();
-                    console.log('Albums loaded from file:', parsed);
+                    // console.log('Albums loaded from file:', parsed);
                 }
             } catch (e) {
                 console.error('Error loading albums file:', e);
@@ -104,9 +105,9 @@ export class AlbumManager { // we need to write export otherwise this class is n
     private saveAlbumsToFile() {
         try {
             fs.writeFileSync(albumsPath, JSON.stringify(this._albums, null, 2)); // write it to file 
-            console.log('Albums saved to file.');
+            // console.log('Albums saved to file.');
         } catch (e) {
-            console.error('Error saving albums file:', e);
+            // console.error('Error saving albums file:', e);
         }
     }
     // structure of our json file should look like this right now 
@@ -131,7 +132,7 @@ export class AlbumManager { // we need to write export otherwise this class is n
     // Calculate next available position in 2x3 grid
     private calculateNextPosition(): { row: number; column: number } {
         const maxRows = 2;
-        const maxColumns = 3;
+        const maxColumns = 4;
 
         // Find the first empty spot in our grid system 
         for (let row = 0; row < maxRows; row++) {
@@ -149,3 +150,4 @@ export class AlbumManager { // we need to write export otherwise this class is n
     }
 
 }
+

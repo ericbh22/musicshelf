@@ -8,4 +8,6 @@ export interface Album {
         row: number; 
         column: number; 
     };
+    spotifyURI: string;
+    isPlaylist: boolean;
 } // this is like abstract base classes in python, basically we have all these things that can be defined later by children classes, but the parent calss is album 

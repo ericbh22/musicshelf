@@ -9,7 +9,9 @@
 }
 
 body {
-    background-image: url("./nightskydownscaled.png");
+    background-image: url("./starbg.png");
+    /* background-color: rgb(5, 5, 4); */
+    /* background-color: rgb(245, 242, 234);  */
     background-size: auto;
     width: 256px;
     height: 256px;
@@ -26,7 +28,7 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 10px;
+    padding-top: 35px;
     cursor: pointer;
     transition: transform 0.2s; /* Fixed the missing property "transition" */
 }
@@ -37,8 +39,8 @@ body {
 
 .album-cover-wrapper {
     position: relative;
-    width: 150px;
-    height: 150px;
+    width: 95px;
+    height: 95px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,10 +73,16 @@ body {
 }
 
 /* Album title and artist */
-.album-title, .album-artist {
+.album-title {
     margin-top: 5px;
-    font-size: 14px;
+    font-size: 12px;
     color: #ffffff;
+    z-index: 4; /* Make sure text is above everything */
+}
+.album-artist{
+    margin-top: 2px;
+    font-size: 10px;
+    color: #969494;
     z-index: 4; /* Make sure text is above everything */
 }
 
@@ -87,11 +95,13 @@ body {
 }
 
 .CD-Overlay {
+    padding-top: 72px;
+    padding-left: 5px;
     position: absolute;
     top: 0;
     left: 0;
-    width: 150px; /* Match exactly with album cover wrapper */
-    height: 150px; /* Match exactly with album cover wrapper */
+    width: 95px; /* Match exactly with album cover wrapper */
+    height: 95px; /* Match exactly with album cover wrapper */
     border-radius: 10px;
     z-index: 1;
     display: flex;
@@ -101,14 +111,33 @@ body {
 }
 
 .cd-image {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     position: absolute;
     /* Center CD precisely */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+.fixed-top-right {
+    position: fixed;
+    top: 0px; /* distance from bottom */
+    right: 0px;   /* distance from left */
+    width: 128px;  /* adjust size as needed */
+    height: auto; /* make sure it's on top of other content */
+    pointer-events: none    ;
+  }
+
+.fixed-bottom-left {
+    position: fixed;
+    bottom: 0px; /* distance from bottom */
+    left: 0px;   /* distance from left */
+    width: 116px;  /* adjust size as needed */
+    height: auto; /* make sure it's on top of other content */
+    z-index: 5;
+    pointer-events: none;
+  }
 
 
 /* Split the animation into two phases: slide out, then continuous spinning */
@@ -117,16 +146,16 @@ body {
         transform: translateX(0) rotate(0deg);
     }
     100% {
-        transform: translateX(60px) rotate(0deg);
+        transform: translateX(35px) rotate(0deg);
     }
 }
 
 @keyframes continuousSpin {
     0% {
-        transform: translateX(60px) rotate(0deg);
+        transform: translateX(35px) rotate(0deg);
     }
     100% {
-        transform: translateX(60px) rotate(360deg);
+        transform: translateX(35px) rotate(360deg);
     }
 }
 
@@ -142,7 +171,7 @@ body {
 
 @keyframes slideIn {
     0% {
-        transform: translateX(60px) rotate(0deg); /*we start from 100 and go to 0 */
+        transform: translateX(35px) rotate(0deg); /*we start from 100 and go to 0 */
     }
     100% {
         transform: translateX(0px) rotate(0deg); /* this is where element will end up */

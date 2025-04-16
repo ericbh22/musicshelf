@@ -1,61 +1,52 @@
 # musicshelf README
 
-This is the README for your extension "musicshelf". After writing up a brief description, we recommend including the following sections.
+**Music Shelf** lets you display your favorite Spotify playlists and albums right in the **VS Code Explorer**, and control playback without leaving your coding flow.
 
+## Installation
+Navigate to the VScode Store and search Music Shelf
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- 🔍 **Spotify API Integration**  
+  Search for playlists and albums and display them in the VS Code sidebar.
 
-For example if there is an image subfolder under your extension project workspace:
+- 🎧 **Full Playback Control**  
+  Play, pause, shuffle, skip — all directly inside VS Code.
 
-\!\[feature X\]\(images/feature-x.png\)
+- 📦 **Explorer Integration**  
+  Drag-and-drop layout with album art for a personalized dev workspace.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- 📟 **Status Bar & Terminal Commands**  
+  Control your music with quick shortcuts and terminal commands.
 
-## Requirements
+<img src="src/assets/displaygif2.gif" alt="Music Shelf in action" width="30%"/>
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
 
-## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## Commands
+Find all the commands by hitting ctrl shift p on windows / cmd shift p on mac and typing ms 
 
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+<img src="src/assets/msfunctions.png" alt="Music Shelf functions" width="30%"/>
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
 ### 1.0.0
 
-Initial release of ...
+Initial release of musicshelf! Thank you for the support
 
-### 1.0.1
 
-Fixed issue #.
 
-### 1.1.0
-
-Added features X, Y, and Z.
+## License:
+MIT
 
 ---
 
-## Following extension guidelines
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+## Known Issues
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+Sometimes, you will need to start listening to something on spotify first to use the application
+You will need Spotify Premium, due to API restrictions
 
-## Working with Markdown
+<!-- ## Working with Markdown
 
 You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
 
@@ -68,4 +59,4 @@ You can author your README using Visual Studio Code. Here are some useful editor
 * [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
-**Enjoy!**
+**Enjoy!** -->

@@ -1,61 +1,102 @@
 {
   "name": "musicshelf",
-  "displayName": "musicshelf",
-  "description": "display and play all your favourite albums neatly from spotify in vscode!",
+  "displayName": "Music Shelf for Spotify",
+  "description": "display and play all your favourite albums and playlists neatly from spotify in vscode!",
+  "publisher": "fromfuchsia",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.98.0"
   },
+  
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    
-  ],
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/ericbh22/musicshelf.git"
+  },
+  "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
-        "views": {
-            "explorer": [
-                {
-                    "id": "musicShelfGrid",
-                    "name": "Music Shelf",
-                    "type": "webview"
-                }
-            ]
-        },
-        "commands": [
-            {
-              "command": "musicshelf.showAlbumGrid",
-              "title": "Show Album Grid"
-          },
-          {
-              "command": "musicshelf.addAlbum",
-              "title": "Add Album"
-          },
-          {
-              "command": "musicshelf.playAlbum",
-              "title": "Play Album"
-          },
-          {
-              "command": "musicshelf.removeAlbum",
-              "title": "Remove Album"
-          }
-            
-        ],
-        "menus": {
-            "view/title": [
-                {
-                    "command": "musicshelf.addAlbum",
-                    "group": "navigation"
-                },
-                {
-                    "command": "musicshelf.removeAlbum",
-                    "group": "navigation"
-                }
-            ]
+    "views": {
+      "explorer": [
+        {
+          "id": "musicShelfGrid",
+          "name": "musicshelf",
+          "type": "webview"
         }
-        
+      ]
     },
+    "commands": [
+      {
+        "command": "musicshelf.playAlbum",
+        "title": "ms Play Album"
+      },
+      {
+        "command": "musicshelf.removeAlbum",
+        "title": "ms Remove Album"
+      },
+      {
+          "command": "musicshelf.login",
+          "title": "ms Login"
+      },
+      {
+        "command": "musicshelf.spotifyPlay",
+        "title": "ms Play/ Start Playback"
+      },
+      {
+        "command": "musicshelf.spotifyPause",
+        "title": "ms Pause Playback"
+      },
+      {"command": "musicshelf.shuffleOn",
+        "title": "ms Turn On Shuffle" },
+        {"command": "musicshelf.shuffleOff",
+        "title": "ms Turn Off Shuffle" },
+
+      {"command": "musicshelf.addAlbum",
+      "title": "ms Search For Album" },
+
+      {"command": "musicshelf.addPlaylist",
+      "title": "ms Search For Playlist" },
+
+      {"command": "musicshelf.addPlaylistURI",
+      "title": "ms Search For Playlist with URI"},
+      {
+        "command": "musicshelf.skipSong",
+        "title": "ms Skip Song"
+      },
+      {
+        "command": "musicshelf.goBackSong",
+        "title": "ms Go back a song"
+      },
+      {
+        "command": "musicshelf.resumeSong",
+        "title": "ms Resume Playback!"
+      }
+
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "musicshelf.removeAlbum",
+          "group": "navigation"
+        },
+        {
+          "command": "musicshelf.addAlbum",
+          "group": "navigation"
+        },
+        {
+          "command": "musicshelf.login",
+          "group": "navigation"
+        },
+        {
+          "command": "musicshelf.addPlaylist",
+          "group": "navigation"
+        }
+
+      ]
+    }
+  },
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
@@ -68,17 +109,21 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.98.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/node-fetch": "^2.6.12",
+    "@types/vscode": "^1.98.0",
     "@typescript-eslint/eslint-plugin": "^8.28.0",
     "@typescript-eslint/parser": "^8.28.0",
-    "eslint": "^9.23.0",
-    "typescript": "^5.8.2",
-    "ts-loader": "^9.5.2",
-    "webpack": "^5.98.0",
-    "webpack-cli": "^6.0.1",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.23.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.2",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
   }
 }
