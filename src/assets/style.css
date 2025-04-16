@@ -93,7 +93,28 @@ body {
 .add-overlay {
     opacity: 0.6;
 }
-
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    border: 2px dashed #555;
+    border-radius: 12px;
+    margin: 2rem auto;
+    max-width: 400px;
+    background-color: #1e1e1e;
+    color: #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .empty-text {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .empty-subtext {
+    font-size: 0.8rem;
+    color: #aaa;
+  }
 .CD-Overlay {
     padding-top: 72px;
     padding-left: 5px;

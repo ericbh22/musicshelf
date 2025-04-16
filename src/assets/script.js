@@ -13,7 +13,9 @@ function renderAlbums(albums) {
     albumGrid.innerHTML = '';
 
     if (albums.length === 0) {
-        albumGrid.innerHTML = '<p>No albums added yet. Use the "Add Album" command to get started.</p>';
+        albumGrid.innerHTML = `
+            <p class="empty-text">No albums added yet</p>
+            <p class="empty-subtext">Use the <strong>"Add Album"</strong> command to get started!</p>`;
         return;
     }
 
