@@ -1,5 +1,6 @@
 {
   "name": "musicshelf",
+  "icon": "src/assets/icon.png",
   "displayName": "Music Shelf for Spotify",
   "description": "display and play all your favourite albums and playlists neatly from spotify in vscode!",
   "publisher": "fromfuchsia",
