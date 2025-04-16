@@ -113,7 +113,43 @@ export function activate(context: vscode.ExtensionContext) {
 		  } else {
 			vscode.window.showErrorMessage("No albums found.");
 		  }
-		})
+		}),
+		vscode.commands.registerCommand("musicshelf.addPlaylistUI", async () => {
+			const albumName = await vscode.window.showInputBox({ prompt: "Playlist Name" });
+		
+			if (!albumName) {
+			  vscode.window.showErrorMessage("Playlist name is required for search.");
+			  return;
+			}
+			const res = await searchSpotifyPlaylists(context, albumName);
+			if (res && res.length > 0) {
+			  
+			  const pick = await vscode.window.showQuickPick(
+				  res.map((album: Album) => ({
+					label: album.title,
+					id: album.id,
+					description: album.artist,
+					detail: album.coverUrl,
+				  })),
+				  { placeHolder: "Select a playlist" }
+				);
+				
+			  if (pick) {
+			  albumManager.addAlbum({
+				  title: pick.label,
+				  artist: pick.description,
+				  coverUrl: pick.detail,
+				  spotifyURI: pick.id || 'default',
+				  isPlaylist: true
+			  });
+				  albumGridWebview.postMessage({ type: 'updateAlbums', albums: albumManager.getAlbums() });
+				vscode.window.showInformationMessage(`You picked: ${pick.label}`);
+				// Optional: open the album in Spotify or store it somewhere
+			  }
+			} else {
+			  vscode.window.showErrorMessage("No albums found.");
+			}
+		  })
 	  );
 
 	  context.subscriptions.push(
@@ -156,7 +192,9 @@ export function activate(context: vscode.ExtensionContext) {
 			albumManager.removeAlbum(name);
 			}
 			albumGridWebview.postMessage({ type: 'updateAlbums', albums: albumManager.getAlbums() });
-		}));
+		},
+		
+	));
 
 	const loginCommand = vscode.commands.registerCommand('musicshelf.login', () => {
 		loginToSpotify(context);
@@ -197,9 +235,54 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('musicshelf.resumeSong', async () => {
 			albumGridWebview.postMessage({ type: 'updateAlbums', albums: albumManager.getAlbums() });
 			await resumeSpotify(context);
-		})
-	);
+		}),
+		vscode.commands.registerCommand('musicshelf.removeAlbumUI', async() => {
+			const name = await vscode.window.showInputBox({prompt : "Name of album to be removed"});
+			if (name){
+			albumManager.removeAlbum(name);
+			}
+			albumGridWebview.postMessage({ type: 'updateAlbums', albums: albumManager.getAlbums() });
+		}),
+		vscode.commands.registerCommand("musicshelf.addAlbumUI", async () => {
+			const albumName = await vscode.window.showInputBox({ prompt: "Album Name" });
+		
+			if (!albumName) {
+			  vscode.window.showErrorMessage("Album name is required for search.");
+			  return;
+			}
+		
+			const res = await searchSpotify(context, albumName);
+		
+			if (res && res.length > 0) {
+			  const pick = await vscode.window.showQuickPick(
+				  res.map((album: Album) => ({
+					label: album.title,
+					id: album.id,
+					description: album.artist,
+					detail: album.coverUrl,
+				  })),
+				  { placeHolder: "Select an album" }
+				);
+				
+			  if (pick) {
+			  albumManager.addAlbum({
+				  title: pick.label,
+				  artist: pick.description,
+				  coverUrl: pick.detail,
+				  spotifyURI: pick.id || 'default',
+				  isPlaylist: false
+			  });
+				  albumGridWebview.postMessage({ type: 'updateAlbums', albums: albumManager.getAlbums() });
+				vscode.window.showInformationMessage(`You picked: ${pick.label}`);
+				// Optional: open the album in Spotify or store it somewhere
+			  }
+			} else {
+			  vscode.window.showErrorMessage("No albums found.");
+			}
+		  })
 
+
+	);
 	context.subscriptions.push(
 		vscode.commands.registerCommand('musicshelf.testTokenRefresh', async () => {
 			const token = await getValidAccessToken(context);

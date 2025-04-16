@@ -72,25 +72,46 @@
       {
         "command": "musicshelf.resumeSong",
         "title": "ms Resume Playback!"
+      },
+      
+      {
+        "command": "musicshelf.removeAlbumUI",
+        "title": "remove album"
+      },
+      {
+        "command": "musicshelf.addAlbumUI",
+        "title": "add album"
+      },
+      {
+        "command": "musicshelf.addPlaylistUI",
+        "title": "add playlist"
+      },
+      {
+        "command": "musicshelf.loginUI",
+        "title": "login"
       }
 
     ],
     "menus": {
       "view/title": [
         {
-          "command": "musicshelf.removeAlbum",
+          "command": "musicshelf.removeAlbumUI",
+          "title": "remove album",
           "group": "navigation"
         },
         {
-          "command": "musicshelf.addAlbum",
+          "command": "musicshelf.addAlbumUI",
+          "title": "add album",
           "group": "navigation"
         },
         {
-          "command": "musicshelf.login",
+          "command": "musicshelf.addPlaylistUI",
+          "title": "add playlist",
           "group": "navigation"
         },
         {
-          "command": "musicshelf.addPlaylist",
+          "command": "musicshelf.loginUI",
+          "title": "login",
           "group": "navigation"
         }
 
