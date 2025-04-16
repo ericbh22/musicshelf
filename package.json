@@ -1,6 +1,5 @@
 {
   "name": "musicshelf",
-  "icon": "src/assets/icon.png",
   "displayName": "Music Shelf for Spotify",
   "description": "display and play all your favourite albums and playlists neatly from spotify in vscode!",
   "publisher": "fromfuchsia",
@@ -8,7 +7,8 @@
   "engines": {
     "vscode": "^1.98.0"
   },
-  
+  "icon": "icon.PNG",
+  "license": "MIT",
   "categories": [
     "Other"
   ],
@@ -22,6 +22,7 @@
     "views": {
       "explorer": [
         {
+          "icon" : "icon.PNG",
           "id": "musicShelfGrid",
           "name": "musicshelf",
           "type": "webview"
