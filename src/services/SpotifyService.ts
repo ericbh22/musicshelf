@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import fetch from 'node-fetch'; // basically like requests in python 
 import * as crypto from 'crypto';
-
 import { refreshDeviceId } from './spotifyplayer';
 // let storedVerifier = ''; // Will hold the verifier for later use
 

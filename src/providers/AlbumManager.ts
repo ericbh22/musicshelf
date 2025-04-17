@@ -1,5 +1,4 @@
 // src/providers/AlbumManager.ts
-// i think we need to use global rpoviders https://code.visualstudio.com/api/references/vscode-api#ExtensionContext.globalState and then use some node stuff 
 import * as vscode from 'vscode';
 import { Album } from '../models/Album';
 import { v4 as uuidv4 } from 'uuid';

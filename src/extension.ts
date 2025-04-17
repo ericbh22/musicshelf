@@ -202,6 +202,13 @@ export function activate(context: vscode.ExtensionContext) {
 	
 		context.subscriptions.push(loginCommand);
 	
+
+	const loginCommand2 = vscode.commands.registerCommand('musicshelf.loginUI', () => {
+		loginToSpotify(context);
+		});
+	
+		context.subscriptions.push(loginCommand2);
+	
 	context.subscriptions.push(
 		vscode.commands.registerCommand('musicshelf.spotifyPlay', async () => {
 			await playSpotify(context,"spotify:album:5FrjDW96mCYw9ECc74c637");
