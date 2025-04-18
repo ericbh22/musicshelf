@@ -92,11 +92,11 @@ function renderAlbums(albums) {
                     currentlyPlaying.classList.add("slide-in");
                     currentlyPlaying.setAttribute('data-cd-state', 'retracted');
 
-                    const previousPlasticOverlay = currentlyPlaying.parentElement.querySelector(".plastic-overlay"); // we need parent here because we are in the CD-OVERLAY div, not in the actual album div, so we need to find the parent elemnt, then look for plastic overlay div 
-                    if (previousPlasticOverlay.classList.contains("remove-overlay")){
-                        previousPlasticOverlay.classList.remove("remove-overlay");
-                    };
-                    previousPlasticOverlay.classList.add("add-overlay");
+                    // const previousPlasticOverlay = currentlyPlaying.parentElement.querySelector(".plastic-overlay"); // we need parent here because we are in the CD-OVERLAY div, not in the actual album div, so we need to find the parent elemnt, then look for plastic overlay div 
+                    // if (previousPlasticOverlay.classList.contains("remove-overlay")){
+                    //     previousPlasticOverlay.classList.remove("remove-overlay");
+                    // };
+                    // previousPlasticOverlay.classList.add("add-overlay");
                     
                     // Let the animation finish before removing the class
                     setTimeout(() => {
@@ -105,10 +105,10 @@ function renderAlbums(albums) {
                 }
                 
                 // removing plastic effect 
-                if (plasticOverlay.classList.contains("add-overlay")){
-                    plasticOverlay.classList.remove("add-overlay");}
-                plasticOverlay.classList.add("remove-overlay"); // this references the album that was being clicked, albumElement.plasticoverlay essentially 
-                // setTimeout(() => {
+                // if (plasticOverlay.classList.contains("add-overlay")){
+                //     plasticOverlay.classList.remove("add-overlay");}
+                // plasticOverlay.classList.add("remove-overlay"); // this references the album that was being clicked, albumElement.plasticoverlay essentially 
+                // // setTimeout(() => {
                 //     plasticOverlay.style.display = "none"; // Hide overlay after timed animation 
                 // }, 500);
                 
@@ -141,9 +141,9 @@ function renderAlbums(albums) {
                 setTimeout(() => {
                     CDOverlay.classList.remove("slide-in");
                 }, 500);
-                plasticOverlay.style.display = "flex";
-                plasticOverlay.classList.remove("remove-overlay");
-                plasticOverlay.classList.add("add-overlay");
+                // plasticOverlay.style.display = "flex";
+                // plasticOverlay.classList.remove("remove-overlay");
+                // plasticOverlay.classList.add("add-overlay");
                 // setTimeout(() => {
                 //     CDOverlay.classList.remove("add-overlay");
                 // }, 500);

@@ -91,7 +91,7 @@ export async function playSpotify(context: vscode.ExtensionContext, albumId?: st
         }
       } else if (!response.ok) {
         const errorText = await response.text();
-        vscode.window.showErrorMessage(`Failed to play: ${response.status} ${errorText} please wait 1 minute or relogin later`);
+        vscode.window.showErrorMessage(`Failed to play: ${response.status} ${errorText} please wait 1 minute or relogin later, Spotify Premium is required`);
       }
       else {
         vscode.window.showInformationMessage('▶️ Playing on Spotify!');
@@ -146,11 +146,11 @@ export async function playSpotify(context: vscode.ExtensionContext, albumId?: st
           return;
         }
       } else {
-        vscode.window.showErrorMessage(`Spotify error: ${error?.error?.message || 'Unknown error'}`);
+        vscode.window.showErrorMessage(`Spotify error: ${error?.error?.message || 'Unknown error'}  Spotify Premium is required` );
       }
     } else if (!response.ok) {
       const errorText = await response.text();
-      vscode.window.showErrorMessage(`Failed to play: ${response.status} ${errorText}`);
+      vscode.window.showErrorMessage(`Failed to play: ${response.status} ${errorText}  Spotify Premium is required`);
     }
     else {
       vscode.window.showInformationMessage('▶️ Playing on Spotify!');
@@ -181,7 +181,7 @@ export async function playSpotify(context: vscode.ExtensionContext, albumId?: st
       
       vscode.window.showErrorMessage(`Failed to play: ${response.status} ${errorText}`);
     } else {
-      vscode.window.showInformationMessage('▶️ Playing on Spotify!');
+      vscode.window.showInformationMessage('▶️ Playing on Spotify! ');
     }
   }
 export async function pauseSpotify(context: vscode.ExtensionContext, albumUri?: string ) {
@@ -214,7 +214,7 @@ export async function pauseSpotify(context: vscode.ExtensionContext, albumUri?: 
 
   if (!response.ok) {
     const errorText = await response.text();
-    vscode.window.showErrorMessage(`Failed to play: ${response.status} ${errorText}`);
+    vscode.window.showErrorMessage(`Failed to play: ${response.status} ${errorText}  Spotify Premium is required`);
   } else {
     vscode.window.showInformationMessage('▶️ Paused!');
   }
@@ -239,7 +239,7 @@ export async function searchSpotify(context: vscode.ExtensionContext, albumName:
     },
   });
   if (!response.ok) {
-    vscode.window.showErrorMessage(`Spotify API error: ${response.status}`);
+    vscode.window.showErrorMessage(`Spotify API error: ${response.status} `);
     return null;
   }
 
@@ -306,7 +306,7 @@ export async function getSpecificPlaylist(context: vscode.ExtensionContext, play
     vscode.window.showErrorMessage('Spotify access token not found. Please log in.');
     return;
   };
-  const seperatedID = playlistURI.split(":")
+  const seperatedID = playlistURI.split(":");
   const playlistID = seperatedID[seperatedID.length - 1]; // cant use -1 in ts
 
   const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistID}`, { // use backticks to enable string interpolation
@@ -457,7 +457,7 @@ export async function shuffleSpotify(context: vscode.ExtensionContext, toggle: b
 
   if (!response.ok) {
     const errorText = await response.text();
-    vscode.window.showErrorMessage(`Failed to toggle shuffle: ${response.status} ${errorText}`);
+    vscode.window.showErrorMessage(`Failed to toggle shuffle: ${response.status} ${errorText}  Spotify Premium is required`);
     return false;
   }
 

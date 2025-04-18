@@ -2,6 +2,8 @@
 
 **Music Shelf** lets you display your favorite Spotify playlists and albums right in the **VS Code Explorer**, and control playback without leaving your coding flow.
 
+You will need spotify premium for most features like playback to work
+
 ## Installation
 Navigate to the VScode Store and search Music Shelf
 ## Features

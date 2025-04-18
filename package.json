@@ -1,9 +1,9 @@
 {
   "name": "musicshelf",
-  "displayName": "Music Shelf for Spotify",
+  "displayName": "MusicShelf for Spotify",
   "description": "display and play all your favourite albums and playlists neatly from spotify in vscode!",
   "publisher": "fromfuchsia",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.98.0"
   },

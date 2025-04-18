@@ -98,6 +98,7 @@ export class AlbumGridWebview implements vscode.WebviewViewProvider {
       </div>
       <div>
         <img src="${webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'src', 'assets', 'flowerborderglow.png'))}" class="fixed-top-right" />
+        <img src="${webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'src', 'assets', 'SpotifyLogo.png'))}" class="fixed-top-left" />
       </div>
       <script src="${utilJS}"></script> 
       <script src="${scriptJS}"></script> <!-- Load external script -->

@@ -221,7 +221,7 @@ export function scheduleAutoRefresh(context: vscode.ExtensionContext) {
         console.log('⚠️ Failed to refresh token');
       }
     }
-  }, 60 * 1000); // Check every 1 minute
+  }, 60 * 1000); 
 
   context.subscriptions.push({ dispose: () => clearInterval(interval) });
 }
